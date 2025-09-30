@@ -18,14 +18,17 @@ router.post('/submit', async (req, res) => {
     if (session.expiresAt && new Date(session.expiresAt) < new Date())
       return res.status(400).json({ error: 'Session expired' });
 
-    const attendance = await Attendance.create({
-      sessionId: session._id,
-      studentName,
-      rollNumber,
-      subject: session.subject,       
-      className: session.className,  
-      extra: { ip: req.ip, ua: req.headers['user-agent'] }
-    });
+    // POST: Submit attendance
+   const attendance = await Attendance.create({
+  sessionId: session._id,
+  studentName: studentName.trim(),
+  rollNumber: rollNumber.trim(),
+  subject: session.subject.trim(),       
+  className: session.className.trim(),  
+  extra: { ip: req.ip, ua: req.headers['user-agent'] },
+  submittedAt: new Date()
+});
+
 
     res.json({ success: true, message: 'Attendance submitted successfully', attendance });
   } catch (err) {
